@@ -140,9 +140,9 @@ _p._ctor = function(gridSize, texture, flipped){
 };
 
 _p = cc.Grid3D.prototype;
-_p._ctor = function(gridSize, texture, flipped){
+_p._ctor = function(gridSize, texture){
     if(gridSize !== undefined)
-        this.initWithSize(gridSize, texture, flipped);
+        this.initWithSize(gridSize, texture);
 };
 
 _p = cc.TiledGrid3D.prototype;
