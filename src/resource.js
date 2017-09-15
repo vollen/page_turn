@@ -1,6 +1,6 @@
 var res = {
     HelloWorld_png : "res/HelloWorld.png",
-    poke_front_png : "res/im_Card2_01.png",
+    poke_front_png : "res/im_Card2_04.png",
     poke_bg_png : "res/cuo_bg.png",
 };
 

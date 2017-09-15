@@ -144,7 +144,10 @@ var TurnCardNode = cc.Node.extend({
                     }
                 }
                 p.y += rect.y;
-                                
+
+                if(isFront){
+                    locVer.x = locGridSize.width - locVer.x;                
+                }
                 grid.setVertex(locVer, p);
             }
         }
