@@ -6,7 +6,8 @@ var HelloWorldLayer = cc.Layer.extend({
         // 1. super init first
         this._super();
 
-        var node = new TurnCardNode(cc.size(20, 20), res.poke_bg_png, res.poke_front_png);
+        cc.log(1111);
+        var node = new TurnCardNode(cc.size(3, 20), res.poke_bg_png, res.poke_front_png);
         this.addChild(node);
 
         node.x = 0;
@@ -128,12 +129,13 @@ var TurnCardNode = cc.Node.extend({
                         p.z = 2 * R / 7;
                         isTurn = true;
                     } else{
+                        var cosBeta = Math.cos(beta);
                         if(beta > Math.PI / 2){
-                            p.x += (p.x - midX) * addPerX * Math.cos(Math.PI - beta);
+                            p.x += (p.x - midX) * addPerX * (- cosBeta);
                         }
-                        
-                        p.y = ay - R * Math.sin(beta);
-                        p.z = R - R * Math.cos(beta);
+
+                        p.y = ay - R * Math.sqrt(1- cosBeta * cosBeta);
+                        p.z = R - R * cosBeta;
                         p.z /=7;
                         isTurn = beta / Math.PI * 180 >= 85;
                     }
@@ -146,7 +148,7 @@ var TurnCardNode = cc.Node.extend({
                 p.y += rect.y;
 
                 if(isFront){
-                    locVer.x = locGridSize.width - locVer.x;                
+                    locVer.x = locGridSize.width - locVer.x;
                 }
                 grid.setVertex(locVer, p);
             }
@@ -159,6 +161,7 @@ var TurnCardNode = cc.Node.extend({
     },
 
     _touchListener:null,
+    _preDy:0,
     setTouchEnabled: function (enable) {
         if (enable) {
             if (!this._touchListener)
@@ -184,6 +187,7 @@ var TurnCardNode = cc.Node.extend({
         var pt = touch.getLocation();
         var size = this.getContentSize();
         var bb = cc.rect(0, 0, size.width, size.height);
+        this._preDy = 0
         return cc.rectContainsPoint(bb, this.convertToNodeSpace(pt));
     },
     onTouchMoved: function (touch, event) {
@@ -191,9 +195,11 @@ var TurnCardNode = cc.Node.extend({
         var startPoint = touch.getStartLocation();
         // var point = this.convertToNodeSpace(touchPoint);
         var offsetY = touchPoint.y - startPoint.y;
-        if(offsetY <= 0){
+
+        if(offsetY <= 0 || Math.abs(offsetY - this._preDy) < 3){
             return;
         }
+        this._preDy = offsetY;
         // cc.renderer.childrenOrderDirty = true;
         this.calculateHorizontalVertexPoints(this._bgGrid, offsetY);
         this.calculateHorizontalVertexPoints(this._frontGrid, offsetY, true);
@@ -202,10 +208,11 @@ var TurnCardNode = cc.Node.extend({
         var touchPoint = touch.getLocation();
         var startPoint = touch.getStartLocation();
         var dy = touchPoint.y - startPoint.y;
+        var offsetY = touchPoint.y - startPoint.y;
         if(dy > this._bgGrid.getGridRect().height / 2){
             this.showFront();
         } else{
-            this.updateOffsetY(0);     
+            this.updateOffsetY(0);
         }
     },
 });
